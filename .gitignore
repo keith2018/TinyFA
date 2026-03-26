@@ -1,0 +1,16 @@
+.DS_Store
+.idea/
+.vs/
+.vscode/
+.cache
+out/
+bin/
+build/
+logs/
+extra/
+cmake-build-*/
+CMakeSettings.json
+Testing
+__pycache__
+*.egg-info
+*.so

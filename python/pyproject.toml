@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "torch", "numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tiny_flash_attn"
+version = "0.1.0"
+description = "TinyFA: A lightweight Flash Attention CUDA implementation"
+requires-python = ">=3.8"
+dependencies = ["torch", "numpy"]
+
+[project.urls]
+Repository = "https://github.com/keith2018/TinyFA"

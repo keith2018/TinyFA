@@ -1,0 +1,21 @@
+*.h text eol=lf
+*.c text eol=lf
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.cu text eol=lf
+*.cuh text eol=lf
+*.py text eol=lf
+*.cmake text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+
+*.cu linguist-language=CUDA
+*.cuh linguist-language=CUDA
+
+extra/** linguist-vendored
+third-party/** linguist-vendored
