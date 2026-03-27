@@ -15,7 +15,7 @@ A lightweight, from-scratch Flash Attention CUDA implementation (forward pass on
 ### Requirements
 
 - NVIDIA GPU (Turing or newer, compute capability >= 7.5)
-- CUDA Toolkit >= 11.4
+- CUDA Toolkit >= 11.8
 - PyTorch (with CUDA support)
 - Python >= 3.8
 - C++17 compatible compiler
@@ -34,13 +34,13 @@ By default, **all HeadDim variants** (32, 64, 96, 128, 192, 256) are compiled. U
 
 ```bash
 # Target a specific head dimension
-TFA_TARGET_HEADDIM=128 pip install .
+TFA_TARGET_HEADDIM=128 pip install --no-build-isolation .
 
 # Target a specific GPU architecture
-TFA_TARGET_SM=sm80 pip install .
+TFA_TARGET_SM=sm80 pip install --no-build-isolation .
 
 # Target a specific data type
-TFA_TARGET_DTYPE=fp16 pip install .
+TFA_TARGET_DTYPE=fp16 pip install --no-build-isolation .
 
 # Combine for fastest compilation
 TFA_TARGET_SM=sm80 TFA_TARGET_DTYPE=fp16 TFA_TARGET_HEADDIM=128 pip install --no-build-isolation .
@@ -48,12 +48,12 @@ TFA_TARGET_SM=sm80 TFA_TARGET_DTYPE=fp16 TFA_TARGET_HEADDIM=128 pip install --no
 
 ## Benchmarks
 
-Speedup vs [Dao-AILab/flash-attention](https://github.com/Dao-AILab/flash-attention): 94-96%
+Achieves **94–96%** of [Dao-AILab/flash-attention](https://github.com/Dao-AILab/flash-attention) throughput (forward pass).
 
 - Device: NVIDIA A100-SXM4-40GB
-- Configuration: batch=2, heads=128, SeqLen=4096.
+- Configuration: batch=2, numHeads=32, headDim=128, SeqLen=4096
 
-| Dtype | Causal | TinyFA (ms) | TinyFA (TFLOPS) | flash_attn (ms) | flash_attn (TFLOPS) | Speedup |
+| Dtype | Causal | TinyFA (ms) | TinyFA (TFLOPS) | flash_attn (ms) | flash_attn (TFLOPS) | Relative |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **fp16** | False | 2.832 | 194.09 | 2.654 | 207.14 | 0.94x |
 | **fp16** | True | 1.636 | 168.01 | 1.557 | 176.54 | 0.95x |
