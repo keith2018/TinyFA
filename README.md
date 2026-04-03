@@ -33,8 +33,9 @@ pip install --no-build-isolation .
 By default, **all HeadDim variants** (32, 64, 96, 128, 192, 256) are compiled. Use environment variables to speed up compilation by targeting specific configurations:
 
 ```bash
-# Target a specific head dimension
-TFA_TARGET_HEADDIM=128 pip install --no-build-isolation .
+# Disable specific head dimensions (each TFA_TARGET_HEADDIM_<N> defaults to ON)
+TFA_TARGET_HEADDIM_32=0 TFA_TARGET_HEADDIM_96=0 TFA_TARGET_HEADDIM_192=0 TFA_TARGET_HEADDIM_256=0 \
+pip install --no-build-isolation .
 
 # Target a specific GPU architecture
 TFA_TARGET_SM=sm80 pip install --no-build-isolation .
@@ -42,8 +43,10 @@ TFA_TARGET_SM=sm80 pip install --no-build-isolation .
 # Target a specific data type
 TFA_TARGET_DTYPE=fp16 pip install --no-build-isolation .
 
-# Combine for fastest compilation
-TFA_TARGET_SM=sm80 TFA_TARGET_DTYPE=fp16 TFA_TARGET_HEADDIM=128 pip install --no-build-isolation .
+# Combine for fastest compilation (only HeadDim=64,128, fp16, sm80)
+TFA_TARGET_SM=sm80 TFA_TARGET_DTYPE=fp16 \
+TFA_TARGET_HEADDIM_32=0 TFA_TARGET_HEADDIM_96=0 TFA_TARGET_HEADDIM_192=0 TFA_TARGET_HEADDIM_256=0 \
+pip install --no-build-isolation .
 ```
 
 ## Benchmarks

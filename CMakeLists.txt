@@ -71,8 +71,12 @@ if (NOT TFA_TARGET_SM)
 endif ()
 set(TFA_TARGET_DTYPE "" CACHE STRING
         "Only compile kernels for this dtype (e.g. fp16). Empty = all. Valid: fp16, bf16, fp32")
-set(TFA_TARGET_HEADDIM "" CACHE STRING
-        "Only compile kernels for this HeadDim (e.g. 128). Default=all. Valid: 32, 64, 96, 128, 192, 256. Empty = all.")
+option(TFA_TARGET_HEADDIM_32  "Compile HeadDim=32 kernels"  ON)
+option(TFA_TARGET_HEADDIM_64  "Compile HeadDim=64 kernels"  ON)
+option(TFA_TARGET_HEADDIM_96  "Compile HeadDim=96 kernels"  ON)
+option(TFA_TARGET_HEADDIM_128 "Compile HeadDim=128 kernels" ON)
+option(TFA_TARGET_HEADDIM_192 "Compile HeadDim=192 kernels" ON)
+option(TFA_TARGET_HEADDIM_256 "Compile HeadDim=256 kernels" ON)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -91,7 +95,16 @@ include(${TFA_CSRC_DIR}/flash_attn/kernels/kernel_sources.cmake)
 message(STATUS "========================================")
 message(STATUS "[TinyFA] TFA_TARGET_SM      = '${TFA_TARGET_SM}'")
 message(STATUS "[TinyFA] TFA_TARGET_DTYPE   = '${TFA_TARGET_DTYPE}'")
-message(STATUS "[TinyFA] TFA_TARGET_HEADDIM = '${TFA_TARGET_HEADDIM}'")
+set(_enabled_headdims "")
+foreach(_hd 32 64 96 128 192 256)
+    if (TFA_TARGET_HEADDIM_${_hd})
+        list(APPEND _enabled_headdims ${_hd})
+    endif ()
+endforeach()
+message(STATUS "[TinyFA] HeadDims enabled   = '${_enabled_headdims}'")
+if (NOT _enabled_headdims)
+    message(FATAL_ERROR "All HeadDims are disabled. At least one TFA_TARGET_HEADDIM_<N> must be ON.")
+endif ()
 message(STATUS "========================================")
 
 # TFA_TARGET_SM
@@ -128,16 +141,6 @@ if (TFA_TARGET_DTYPE)
     set(TFA_KERNEL_SOURCES ${_filtered})
 endif ()
 
-# TFA_TARGET_HEADDIM
-if (TFA_TARGET_HEADDIM)
-    set(_valid_headdims 32 64 96 128 192 256)
-    if (NOT TFA_TARGET_HEADDIM IN_LIST _valid_headdims)
-        message(FATAL_ERROR "TFA_TARGET_HEADDIM='${TFA_TARGET_HEADDIM}' is not valid. "
-                "Valid: 32, 64, 96, 128, 192, 256")
-    endif ()
-    message(STATUS "[TinyFA] Filtering kernels for HeadDim=${TFA_TARGET_HEADDIM}")
-endif ()
-
 message(STATUS "[TinyFA] Compiling ${CMAKE_CURRENT_LIST_DIR}: ${TFA_KERNEL_SOURCES}")
 
 
@@ -154,9 +157,12 @@ else ()
     set_property(TARGET tinyfa PROPERTY CUDA_ARCHITECTURES ${TFA_CUDA_ARCHITECTURES})
 endif ()
 
-if (TFA_TARGET_HEADDIM)
-    target_compile_definitions(tinyfa PUBLIC TFA_TARGET_HEADDIM=${TFA_TARGET_HEADDIM})
-endif ()
+# TFA_TARGET_HEADDIM_<N>
+foreach(_hd 32 64 96 128 192 256)
+    if (TFA_TARGET_HEADDIM_${_hd})
+        target_compile_definitions(tinyfa PUBLIC TFA_TARGET_HEADDIM_${_hd}=1)
+    endif ()
+endforeach()
 
 if (TFA_TARGET_DTYPE)
     string(TOLOWER "${TFA_TARGET_DTYPE}" _tfa_dtype_lower2)

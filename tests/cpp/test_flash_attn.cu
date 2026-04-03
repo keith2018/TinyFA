@@ -201,11 +201,9 @@ class FlashAttnTest : public ::testing::Test {
   template <typename DType>
   void runFlashAttnTestTyped(int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV, int headDim,
                              bool isCausal = false) {
-#ifdef TFA_TARGET_HEADDIM
-    if (headDim != TFA_TARGET_HEADDIM) {
-      GTEST_SKIP() << "Compiled with TFA_TARGET_HEADDIM=" << TFA_TARGET_HEADDIM << ", skipping headDim=" << headDim;
+    if (!tfa::isHeadDimCompiled(headDim)) {
+      GTEST_SKIP() << "headDim=" << headDim << " not compiled, skipping";
     }
-#endif
     const int qSize = batchSize * seqLenQ * numHeadsQ * headDim;
     const int kvSize = batchSize * seqLenKV * numHeadsKV * headDim;
 
@@ -270,11 +268,9 @@ class FlashAttnTest : public ::testing::Test {
   template <typename DType>
   void runFlashAttnVarLenTestTyped(const std::vector<int>& seqLensQ, const std::vector<int>& seqLensKV, int numHeadsQ,
                                    int numHeadsKV, int headDim, bool isCausal = false) {
-#ifdef TFA_TARGET_HEADDIM
-    if (headDim != TFA_TARGET_HEADDIM) {
-      GTEST_SKIP() << "Compiled with TFA_TARGET_HEADDIM=" << TFA_TARGET_HEADDIM << ", skipping headDim=" << headDim;
+    if (!tfa::isHeadDimCompiled(headDim)) {
+      GTEST_SKIP() << "headDim=" << headDim << " not compiled, skipping";
     }
-#endif
     int batchSize = seqLensQ.size();
 
     std::vector<int> cuSeqLensQ(batchSize + 1), cuSeqLensKV(batchSize + 1);

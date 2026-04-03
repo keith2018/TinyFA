@@ -12,7 +12,7 @@ namespace tfa::impl {
 
 // clang-format off
 
-#if !defined(TFA_TARGET_HEADDIM) || TFA_TARGET_HEADDIM == 32
+#ifdef TFA_TARGET_HEADDIM_32
 template void runFwd<SM75, __nv_bfloat16, 32, false>(
     const __nv_bfloat16* Q, const __nv_bfloat16* K, const __nv_bfloat16* V, __nv_bfloat16* O,
     int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV,
@@ -38,7 +38,7 @@ template void runFwdVarlen<SM75, __nv_bfloat16, 32, true>(
     cudaStream_t stream);
 #endif
 
-#if !defined(TFA_TARGET_HEADDIM) || TFA_TARGET_HEADDIM == 64
+#ifdef TFA_TARGET_HEADDIM_64
 template void runFwd<SM75, __nv_bfloat16, 64, false>(
     const __nv_bfloat16* Q, const __nv_bfloat16* K, const __nv_bfloat16* V, __nv_bfloat16* O,
     int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV,
@@ -64,7 +64,7 @@ template void runFwdVarlen<SM75, __nv_bfloat16, 64, true>(
     cudaStream_t stream);
 #endif
 
-#if !defined(TFA_TARGET_HEADDIM) || TFA_TARGET_HEADDIM == 96
+#ifdef TFA_TARGET_HEADDIM_96
 template void runFwd<SM75, __nv_bfloat16, 96, false>(
     const __nv_bfloat16* Q, const __nv_bfloat16* K, const __nv_bfloat16* V, __nv_bfloat16* O,
     int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV,
@@ -90,7 +90,7 @@ template void runFwdVarlen<SM75, __nv_bfloat16, 96, true>(
     cudaStream_t stream);
 #endif
 
-#if !defined(TFA_TARGET_HEADDIM) || TFA_TARGET_HEADDIM == 128
+#ifdef TFA_TARGET_HEADDIM_128
 template void runFwd<SM75, __nv_bfloat16, 128, false>(
     const __nv_bfloat16* Q, const __nv_bfloat16* K, const __nv_bfloat16* V, __nv_bfloat16* O,
     int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV,
@@ -116,7 +116,7 @@ template void runFwdVarlen<SM75, __nv_bfloat16, 128, true>(
     cudaStream_t stream);
 #endif
 
-#if !defined(TFA_TARGET_HEADDIM) || TFA_TARGET_HEADDIM == 192
+#ifdef TFA_TARGET_HEADDIM_192
 template void runFwd<SM75, __nv_bfloat16, 192, false>(
     const __nv_bfloat16* Q, const __nv_bfloat16* K, const __nv_bfloat16* V, __nv_bfloat16* O,
     int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV,
@@ -142,7 +142,7 @@ template void runFwdVarlen<SM75, __nv_bfloat16, 192, true>(
     cudaStream_t stream);
 #endif
 
-#if !defined(TFA_TARGET_HEADDIM) || TFA_TARGET_HEADDIM == 256
+#ifdef TFA_TARGET_HEADDIM_256
 template void runFwd<SM75, __nv_bfloat16, 256, false>(
     const __nv_bfloat16* Q, const __nv_bfloat16* K, const __nv_bfloat16* V, __nv_bfloat16* O,
     int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV,

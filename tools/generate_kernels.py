@@ -47,7 +47,7 @@ PRELUDE = """\
 """
 
 INSTANTIATION_BLOCK = """\
-#if !defined(TFA_TARGET_HEADDIM) || TFA_TARGET_HEADDIM == {head_dim}
+#ifdef TFA_TARGET_HEADDIM_{head_dim}
 template void runFwd<{sm_tag}, {dtype}, {head_dim}, false>(
     const {dtype}* Q, const {dtype}* K, const {dtype}* V, {dtype}* O,
     int batchSize, int seqLenQ, int seqLenKV, int numHeadsQ, int numHeadsKV,

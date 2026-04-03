@@ -97,28 +97,27 @@ if _target_dtype:
         )
     print(f"[TinyFA] Filtering kernels for dtype={_target_dtype}: {len(kernel_sources)} files")
 
-# Optional: set TFA_TARGET_HEADDIM env var to compile kernels for a specific HeadDim only.
-# Default is empty (all HeadDim variants: 32, 64, 96, 128, 192, 256).
-# e.g. TFA_TARGET_HEADDIM=128 pip install -e .  # compile only HeadDim=128 for faster build
-# e.g. TFA_TARGET_HEADDIM=64  pip install -e .  # compile only HeadDim=64
-_target_headdim = os.environ.get("TFA_TARGET_HEADDIM", "").strip()
+# TFA_TARGET_HEADDIM_<N>: each defaults to ON, set env var to 0/OFF/FALSE to disable.
+# e.g. TFA_TARGET_HEADDIM_32=0 TFA_TARGET_HEADDIM_96=0 pip install -e .
+_all_headdims = [32, 64, 96, 128, 192, 256]
+_enabled_headdims = []
+for _hd in _all_headdims:
+    _env_val = os.environ.get(f"TFA_TARGET_HEADDIM_{_hd}", "1").strip()
+    if _env_val.upper() not in ("0", "OFF", "FALSE", "NO"):
+        _enabled_headdims.append(_hd)
+
+if not _enabled_headdims:
+    raise ValueError(
+        "All HeadDims are disabled. At least one TFA_TARGET_HEADDIM_<N> must be enabled."
+    )
 
 print("=" * 40)
 print(f"[TinyFA] TFA_TARGET_SM      = '{_target_sm}'")
 print(f"[TinyFA] TFA_TARGET_DTYPE   = '{_target_dtype}'")
-print(f"[TinyFA] TFA_TARGET_HEADDIM = '{_target_headdim}'")
+print(f"[TinyFA] HeadDims enabled   = {_enabled_headdims}")
 print("=" * 40)
 
-_headdim_nvcc_flags = []
-if _target_headdim:
-    _valid_headdims = {"32", "64", "96", "128", "192", "256"}
-    if _target_headdim not in _valid_headdims:
-        raise ValueError(
-            f"TFA_TARGET_HEADDIM='{_target_headdim}' is not valid. "
-            f"Valid values: 32, 64, 96, 128, 192, 256"
-        )
-    _headdim_nvcc_flags = [f"-DTFA_TARGET_HEADDIM={_target_headdim}"]
-    print(f"[TinyFA] Filtering kernels for HeadDim={_target_headdim}")
+_headdim_nvcc_flags = [f"-DTFA_TARGET_HEADDIM_{hd}=1" for hd in _enabled_headdims]
 
 # TFA_DISPATCH_DTYPE
 _dtype_nvcc_flags = []

@@ -47,35 +47,88 @@ struct KernelConfig {
     break;                                      \
   }
 
-#ifdef TFA_TARGET_HEADDIM
-#define TFA_DISPATCH_HEAD_DIM(headDim, HEAD_DIM_VAR, ...)                                                   \
-  [&] {                                                                                                     \
-    switch (headDim) {                                                                                      \
-      TFA_HEAD_DIM_CASE(TFA_TARGET_HEADDIM, HEAD_DIM_VAR, __VA_ARGS__)                                      \
-      default:                                                                                              \
-        fprintf(stderr, "TinyFA: unsupported headDim: %d (compiled with TFA_TARGET_HEADDIM=%d)\n", headDim, \
-                TFA_TARGET_HEADDIM);                                                                        \
-        abort();                                                                                            \
-        break;                                                                                              \
-    }                                                                                                       \
-  }()
+#ifdef TFA_TARGET_HEADDIM_32
+#define _TFA_HD_CASE_32(V, ...) TFA_HEAD_DIM_CASE(32, V, __VA_ARGS__)
 #else
+#define _TFA_HD_CASE_32(V, ...)
+#endif
+
+#ifdef TFA_TARGET_HEADDIM_64
+#define _TFA_HD_CASE_64(V, ...) TFA_HEAD_DIM_CASE(64, V, __VA_ARGS__)
+#else
+#define _TFA_HD_CASE_64(V, ...)
+#endif
+
+#ifdef TFA_TARGET_HEADDIM_96
+#define _TFA_HD_CASE_96(V, ...) TFA_HEAD_DIM_CASE(96, V, __VA_ARGS__)
+#else
+#define _TFA_HD_CASE_96(V, ...)
+#endif
+
+#ifdef TFA_TARGET_HEADDIM_128
+#define _TFA_HD_CASE_128(V, ...) TFA_HEAD_DIM_CASE(128, V, __VA_ARGS__)
+#else
+#define _TFA_HD_CASE_128(V, ...)
+#endif
+
+#ifdef TFA_TARGET_HEADDIM_192
+#define _TFA_HD_CASE_192(V, ...) TFA_HEAD_DIM_CASE(192, V, __VA_ARGS__)
+#else
+#define _TFA_HD_CASE_192(V, ...)
+#endif
+
+#ifdef TFA_TARGET_HEADDIM_256
+#define _TFA_HD_CASE_256(V, ...) TFA_HEAD_DIM_CASE(256, V, __VA_ARGS__)
+#else
+#define _TFA_HD_CASE_256(V, ...)
+#endif
+
 #define TFA_DISPATCH_HEAD_DIM(headDim, HEAD_DIM_VAR, ...)              \
   [&] {                                                                \
     switch (headDim) {                                                 \
-      TFA_HEAD_DIM_CASE(32, HEAD_DIM_VAR, __VA_ARGS__)                 \
-      TFA_HEAD_DIM_CASE(64, HEAD_DIM_VAR, __VA_ARGS__)                 \
-      TFA_HEAD_DIM_CASE(96, HEAD_DIM_VAR, __VA_ARGS__)                 \
-      TFA_HEAD_DIM_CASE(128, HEAD_DIM_VAR, __VA_ARGS__)                \
-      TFA_HEAD_DIM_CASE(192, HEAD_DIM_VAR, __VA_ARGS__)                \
-      TFA_HEAD_DIM_CASE(256, HEAD_DIM_VAR, __VA_ARGS__)                \
+      _TFA_HD_CASE_32(HEAD_DIM_VAR, __VA_ARGS__)                       \
+      _TFA_HD_CASE_64(HEAD_DIM_VAR, __VA_ARGS__)                       \
+      _TFA_HD_CASE_96(HEAD_DIM_VAR, __VA_ARGS__)                       \
+      _TFA_HD_CASE_128(HEAD_DIM_VAR, __VA_ARGS__)                      \
+      _TFA_HD_CASE_192(HEAD_DIM_VAR, __VA_ARGS__)                      \
+      _TFA_HD_CASE_256(HEAD_DIM_VAR, __VA_ARGS__)                      \
       default:                                                         \
         fprintf(stderr, "TinyFA: unsupported headDim: %d\n", headDim); \
         abort();                                                       \
         break;                                                         \
     }                                                                  \
   }()
+
+inline bool isHeadDimCompiled(int headDim) {
+  switch (headDim) {
+#ifdef TFA_TARGET_HEADDIM_32
+    case 32:
+      return true;
 #endif
+#ifdef TFA_TARGET_HEADDIM_64
+    case 64:
+      return true;
+#endif
+#ifdef TFA_TARGET_HEADDIM_96
+    case 96:
+      return true;
+#endif
+#ifdef TFA_TARGET_HEADDIM_128
+    case 128:
+      return true;
+#endif
+#ifdef TFA_TARGET_HEADDIM_192
+    case 192:
+      return true;
+#endif
+#ifdef TFA_TARGET_HEADDIM_256
+    case 256:
+      return true;
+#endif
+    default:
+      return false;
+  }
+}
 
 template <typename Arch, typename DType, int HeadDim, bool IsCausal = false>
 struct ConfigForArch {
